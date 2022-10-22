@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script>
         function send(key) {
-            fetch("http://localhost:8000/send?key=a")
+            fetch("/send?key=a")
                 .then((responce) => { if (!responce.ok) { new Error(`${responce.status}`) } })
                 .catch((err) => console.log(err.message))
         }
