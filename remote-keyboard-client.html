@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <script>
-        function send(key) {
-            fetch("/send?key=a")
-                .then((responce) => { if (!responce.ok) { new Error(`${responce.status}`) } })
-                .catch((err) => console.log(err.message))
-        }
-        document.addEventListener('keydown', (event) => alert(event.key))
+        function tapKey(str) { fetch(`/tap?key=${str}`) }
+        function typeString(str) { fetch(`/type?str=${str}`) }
     </script>
     <title>Remote keyboard</title>
 </head>
 
 <body>
-    <button onclick="send('a')">send key</button>
+    <div>
+        <input type="text" id="stringToSend">
+        <button onclick='typeString(document.getElementById("stringToSend").value)'>Send string</button>
+    </div>
+    <div>
+        <button onclick="tapKey('a')">a</button>
+        <button onclick="tapKey('b')">b</button>
+    </div>
 </body>
 
 </html>
