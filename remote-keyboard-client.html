@@ -4,24 +4,75 @@
 <head>
     <meta charset="UTF-8">
     <script>
-        function tapKey(key, alts) {
-            var altstr = alts.map((a) => `&alt=${a}`).join('');
+        function tapKey(key) {
+            var altstr = makeAlt().map((a) => `&alt=${a}`).join('');
             fetch(`/tap?key=${key}${altstr}`)
+            clearAlt()
         }
         function typeString(str) { fetch(`/type?str=${str}`) }
+        function makeAlt() {
+            return ["shift", "ctrl", "alt", "cmd"]
+                .map((id) => document.getElementById(id))
+                .filter((element) => element != null)
+                .filter((element) => element.getAttribute("aria-pressed") !== "false")
+                .map((element) => element.id)
+        }
+        function clearAlt() {
+            ["shift", "ctrl", "alt", "cmd"]
+                .map((id) => document.getElementById(id))
+                .filter((element) => element != null)
+                .filter((element) => element.getAttribute("aria-pressed") === "true")
+                .forEach((element) => element.setAttribute("aria-pressed", "false"))
+        }
+        function togglePressed(event) {
+            const released = event.target.getAttribute("aria-pressed") === "false"
+            event.target.setAttribute("aria-pressed", released ? "true" : "false");
+        }
+        function toggleMixed(event) {
+            event.target.setAttribute("aria-pressed", "mixed");
+        }
     </script>
+    <style>
+        [role="button"] {
+            color: black;
+            background-color: white;
+        }
+
+        [role="button"][aria-pressed="true"] {
+            color: white;
+            background-color: blue;
+        }
+
+        [role="button"][aria-pressed="mixed"] {
+            color: white;
+            background-color: red;
+        }
+    </style>
     <title>Remote keyboard</title>
 </head>
 
 <body>
     <div>
-        <input type="text" id="stringToSend">
         <button onclick='typeString(document.getElementById("stringToSend").value)'>Send string</button>
+        <input type="text" id="stringToSend" style="width: 85%">
     </div>
+    <hr>
     <div>
-        <button onclick="tapKey('a', [])">a</button>
-        <button onclick="tapKey('b', [])">b</button>
-        <button onclick="tapKey('a', ['shift','ctrl'])">A</button>
+        <div id="altButtons">
+            <span role="button" id="shift" aria-pressed="false" onclick="togglePressed(event)"
+                ondblclick="toggleMixed(event)">Shift</span>
+            <span role="button" id="ctrl" aria-pressed="false" onclick="togglePressed(event)"
+                ondblclick="toggleMixed(event)">Ctrl</span>
+            <span role="button" id="alt" aria-pressed="false" onclick="togglePressed(event)"
+                ondblclick="toggleMixed(event)">Alt</span>
+            <span role="button" id="cmd" aria-pressed="false" onclick="togglePressed(event)"
+                ondblclick="toggleMixed(event)">Cmd</span>
+        </div>
+        <hr>
+        <div>
+            <button onclick="tapKey('a')">a</button>
+            <button onclick="tapKey('b')">b</button>
+        </div>
     </div>
 </body>
 
