@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <script>
-        function tapKey(str) { fetch(`/tap?key=${str}`) }
+        function tapKey(key, alts) {
+            var altstr = alts.map((a) => `&alt=${a}`).join('');
+            fetch(`/tap?key=${key}${altstr}`)
+        }
         function typeString(str) { fetch(`/type?str=${str}`) }
     </script>
     <title>Remote keyboard</title>
@@ -15,8 +18,9 @@
         <button onclick='typeString(document.getElementById("stringToSend").value)'>Send string</button>
     </div>
     <div>
-        <button onclick="tapKey('a')">a</button>
-        <button onclick="tapKey('b')">b</button>
+        <button onclick="tapKey('a', [])">a</button>
+        <button onclick="tapKey('b', [])">b</button>
+        <button onclick="tapKey('a', ['shift','ctrl'])">A</button>
     </div>
 </body>
 
