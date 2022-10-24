@@ -1,8 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import Dict, List
 from urllib.parse import parse_qs, urlparse
 from pynput.keyboard import Controller
 
-keyboard = Controller()
+_keyboard = Controller()
 
 
 class MyServer(BaseHTTPRequestHandler):
@@ -17,12 +18,12 @@ class MyServer(BaseHTTPRequestHandler):
         else:
             self.send_error(404, f"Unknown resource address {parsed.path}")
 
-    def send(self, query) -> None:
+    def send(self, query: Dict[str, List[str]]) -> None:
+        """文字列をキーボードから入力する"""
         self.sendHeader("text/plain")
-        if keys := query.get("key"):
-            for key in keys:
-                keyboard.type(key)
-                print(key)
+        if strings := query.get("str"):
+            for string in strings:
+                _keyboard.type(string)
 
     def displayAddress(self) -> None:
         self.send_error(404, "not implemented, yet.")
