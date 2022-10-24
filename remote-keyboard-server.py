@@ -55,10 +55,8 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(self.GetClientPage())
 
     def GetClientPage(self) -> bytes:
-        if not hasattr(self, "clientPage") or self.clientPage is None:
-            with open("remote-keyboard-client.html", "rb") as f:
-                self.clientPage = f.read()
-        return self.clientPage
+        with open("remote-keyboard-client.html", "rb") as f:
+            return f.read()
 
     def sendHeader(self, contentType: str) -> None:
         self.send_response(200)
