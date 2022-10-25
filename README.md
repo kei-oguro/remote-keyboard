@@ -1,21 +1,45 @@
 # remote-keyboard
+
 python http server and Javascript client sends key-code or unicode string.
+
+This is not a security consideration at all. Use carefully.
 
 ## Server
 
-python script boots the http server.
-Server waits requests.
-Requests contains keycodes and shift, ctrl, alt, meta keys status.
+python script boots the http server. Server waits requests. Requests contains strings or keycodes with shift, ctrl, alt, meta keys status.
 
 ex)
 ```
-curl http://localhost:8000/send?key=a&shift=1
+curl http://localhost:8000/send?tap=a&alt=shift
 ```
 
-(not implemented) Server deliver client page.
 - Server returns client html page, if path is empty.
-- If path is `webcome`, server returns QR code .png image to input httpd server address, like `http://192.168.1.2/`.
+- (not implementd) If path is `webcome`, server returns QR code .png image to input httpd server address, like `http://192.168.1.2:8000/`.
   - You display this page on server machine and read QR code to open the page on client machine (e.g. smart phone).
+- Server sends keyboard events for every request it received.
+
+### API
+
+- `/` returns client html page.
+- `/tap` sends keyboard event to server machine. It is for unicode string.
+  - Argument.
+    - str
+      - Specify unicode string. Server sends this string to machine running this process.
+- `/type` sends keyboard event to server machine. It is for only 1 key input, key-down and key-up. Event contains meta key status. Maybe, you can use this API to press multi keys simultaneously.
+  - Arguments.
+    - key
+      - Specify keycode.
+      - Keycodes are listed in https://pynput.readthedocs.io/en/latest/keyboard.html#pynput.keyboard.Key
+    - alt
+      - Specify keycode.
+      - Usually, alt keys are `shift`, `ctrl`, `alt` and `cmd`. But you can specify non-meta keys to press regular keys.
+- `/welcome` not implemented.
+
+The same argument may be specified any number of times.
+
+Mouse event APIs are good idea. But it is not scheduled. 
+
+Separated single key-down and key-up event APIs are not scheduled.
 
 ## Client
 
@@ -29,9 +53,9 @@ If you want, use `curl` or similar tools to send request.
 
 ## Install
 
-1. Clone this project or download.
-2. Install python3.
-3. Install dependencies. Like ... `pip install pynput`. Add `--user` is you need.
+1. Install python3.
+2. Install dependencies. Like ... `pip install pynput`. Add `--user` if you need.
+3. Clone this project or download.
 
 ## Run
 
